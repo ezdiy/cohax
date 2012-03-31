@@ -10,7 +10,7 @@ tint = (text, color ? green) -> color + text + reset
 
 # Run our node/coco interpreter.
 run = (args) ->
-  proc = spawn \bin/coco args
+  proc = spawn \coco args
   proc.stderr.on \data say
   proc       .on \exit -> process.exit it if it
 
@@ -28,18 +28,18 @@ minify = ->
 
 option \prefix 'set the installation prefix for `install`' \DIR
 
-task \install 'install Coco into /usr/local (or --prefix)' (options) ->
+task \install 'install Cohax into /usr/local (or --prefix)' (options) ->
   base = options.prefix or \/usr/local
-  lib  = "#base/lib/coco"
+  lib  = "#base/lib/cohax"
   bin  = "#base/bin"
   nlib = \~/.node_libraries
   e, stdout, stderr <- exec """
     echo Installing Coco to #lib
     mkdir -p #lib #bin #nlib
     cp -rf lib LICENSE README.md package.json #lib
-    ln -sfv  #lib/lib/command.js #bin/coco
-    ln -sfv  #lib/lib/coke.js    #bin/coke
-    ln -sfnv #lib/lib #nlib/coco
+    ln -sfv  #lib/lib/command.js #bin/cohax
+    ln -sfv  #lib/lib/cokex.js    #bin/cokex
+    ln -sfnv #lib/lib #nlib/cohax
     """replace /\n/g \&&
   say stdout.trim! if stdout
   say if e then stderr.trim! else tint \done
@@ -48,7 +48,7 @@ task \install 'install Coco into /usr/local (or --prefix)' (options) ->
 docs = <[ doc.co lang-co.co ]>
 
 task \build 'build lib/ from src/' ->
-  ext = /\.co$/; webs = docs.concat \mode-coco.co
+  ext = /\.co$/; webs = docs.concat \mode-cohax.co
   sources = for file of dir \src
     \src/ + file if ext.test file and file not of webs
   run [\-bco \lib]concat sources
@@ -71,31 +71,31 @@ task \build:parser 'build lib/parser.js from lib/grammar.js' ->
 
 task \build:doc 'build doc/' ->
   <- docs.forEach
-  name = it.slice 0 -3; js = require(\./lib/coco)compile slurp \src/ + it
+  name = it.slice 0 -3; js = require(\./lib/cohax)compile slurp \src/ + it
   fs.writeFile "doc/#name.raw.js"    js
   slobber      "doc/#name.js" minify js
 
 task \build:browser 'build extras/' ->
-  Coco = require \./lib/coco
-  js = Coco.compile slurp \src/mode-coco.co
-  fs.writeFile \extras/mode-coco.raw.js    js
-  slobber      \extras/mode-coco.js minify js
+  Coco = require \./lib/cohax
+  js = Coco.compile slurp \src/mode-cohax.co
+  fs.writeFile \extras/mode-cohax.raw.js    js
+  slobber      \extras/mode-cohax.js minify js
   co = ''
-  for name of <[ lexer ast coco ]>
+  for name of <[ lexer ast cohax ]>
     code = slurp("src/#name.co")replace /\n/g '\n '
     co += "let exports = require'./#name' = {}\n#code\n"
-  fs.writeFile \extras/coco.raw.js js = """
+  fs.writeFile \extras/cohax.raw.js js = """
     this.Coco = function(){
     function require(path){ return require[path] }
     var exports = require['./parser'] = {}; #{ slurp \lib/parser.js }
     #{ Coco.compile co, {+bare} }
-    return require['./coco']
+    return require['./cohax']
     }()
     this.window && function(){\n#{ slurp \lib/browser.js }\n}()
     this.WSH    && function(){\n#{ slurp \lib/wsh.js     }\n}()
     this.Coco
   """
-  slobber \extras/coco.js """
+  slobber \extras/cohax.js """
     // Coco #{Coco.VERSION}
     // Copyright 2012, Jeremy Ashkenas + Satoshi Murakami
     // Released under the MIT License
@@ -106,10 +106,10 @@ task \build:browser 'build extras/' ->
   invoke \test:browser
 
 
-coreSources = -> "src/#src.co" for src of <[ coco grammar lexer ast ]>
+coreSources = -> "src/#src.co" for src of <[ cohax grammar lexer ast ]>
 
 task \bench 'quick benchmark of compilation time' ->
-  Coco   = require \./lib/coco
+  Coco   = require \./lib/cohax
   co     = coreSources!map(-> slurp it)join \\n
   fmt    = -> "#bold#{ "   #it"slice -4 }#reset ms"
   total  = nc = 0
@@ -133,13 +133,13 @@ task \loc 'count the lines of main compiler code' ->
   console.log count
 
 
-task \test 'run test/' -> runTests require \./lib/coco
+task \test 'run test/' -> runTests require \./lib/cohax
 
-task \test:browser 'run test/ against extras/coco.js' ->
-  runTests (new new Function slurp \extras/coco.js)Coco
+task \test:browser 'run test/ against extras/cohax.js' ->
+  runTests (new new Function slurp \extras/cohax.js)Coco
 
 task \test:json 'test JSON {de,}serialization' ->
-  {ast} = require \./lib/coco
+  {ast} = require \./lib/cohax
   json = ast slurp \src/ast.co .stringify!
   code = ast.parse json .compileRoot {+bare}
   exec 'diff -u lib/ast.js -' (e, out) -> say e || out.trim! || tint \ok

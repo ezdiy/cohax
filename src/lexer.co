@@ -67,8 +67,8 @@ exports import
         switch code.charAt i+1
         case \* then i += @doComment code, i
         case \/ then i += @doHeregex code, i
+        case \` then i += @doJS code, i
         default      i += @doRegex code, i or @doLiteral code, i
-      case \` then i += @doJS code, i
       default i += @doID code, i or @doLiteral code, i or @doSpace code, i
     # Close up all remaining open blocks.
     @dedent @dent
@@ -245,7 +245,7 @@ exports import
   # Matches embedded JavaScript.
   doJS: (code, JSTOKEN.lastIndex) ->
     js = JSTOKEN.exec code .0 or @carp 'unterminated JS literal'
-    @token \LITERAL Object(detab js.slice(1 -1), @dent) <<< {+js}
+    @token \LITERAL Object(detab js.slice(2 -1), @dent) <<< {+js}
     @countLines(js)length
 
   # Matches a regular expression literal aka _regex_,
@@ -937,7 +937,7 @@ SYMBOL = //
 SPACE     = /(?=.)[^\n\S]*(?:#.*)?|/g
 MULTIDENT = /(?:\s*#.*)*(?:\n([^\n\S]*))+/g
 SIMPLESTR = /'[^\\']*(?:\\[\s\S][^\\']*)*'|/g
-JSTOKEN   = /`[^\\`]*(?:\\[\s\S][^\\`]*)*`|/g
+JSTOKEN   = /\/`[^\\`]*(?:\\[\s\S][^\\`]*)*`|/g
 BSTOKEN   = // \\ (?: (\S[^\s,;)}\]]*) | \s* ) //g
 
 NUMBER = //

@@ -1,4 +1,4 @@
-name    : \coco
+name    : \cohax
 version : \0.7.0
 
 description : 'Unfancy CoffeeScript'
@@ -17,10 +17,10 @@ licenses :
 engines     : node: '>= 0.6.2'
 directories : lib: \./lib
 
-main : \./lib/coco
+main : \./lib/cohax
 bin  :
-  coco: \./lib/command.js
-  coke: \./lib/coke.js
+  cohax: \./lib/command.js
+  cokex: \./lib/cokex.js
 
 repository: type: \git, url: \git://github.com/satyr/coco.git
 

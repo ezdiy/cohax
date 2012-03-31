@@ -1,5 +1,5 @@
 {
-  "name": "coco",
+  "name": "cohax",
   "version": "0.7.0",
   "description": "Unfancy CoffeeScript",
   "keywords": [
@@ -22,14 +22,14 @@
   "directories": {
     "lib": "./lib"
   },
-  "main": "./lib/coco",
+  "main": "./lib/cohax",
   "bin": {
-    "coco": "./lib/command.js",
-    "coke": "./lib/coke.js"
+    "cohax": "./lib/command.js",
+    "cokex": "./lib/coke.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/satyr/coco.git"
+    "url": "git://github.com/satyr/cohax.git"
   },
   "devDependencies": {
     "jison": "0.2.1",
